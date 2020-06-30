@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "main": "codbot.js",
     "scripts": {
-        "start": "node scrape.js"
+        "start": "node codbot.js"
     },
     "dependencies": {
         "cheerio": "^1.0.0-rc.3",
