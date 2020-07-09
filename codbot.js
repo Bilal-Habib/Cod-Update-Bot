@@ -4,34 +4,17 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
 
-const token = 'Njg2ODk2MDYwNTI2MTAwNDkw.Xvt_nA.Iz94EjfxE5UiSi7CPuJjUIDFbZ4';
+const token = 'Njg2ODk2MDYwNTI2MTAwNDkw.XweRcg.c3gn58t-RXKubMqGobSTrFQZjos';
 const codURL = "https://www.infinityward.com/news";
-// Stores link of update
-const botDateFile = "latest-date.txt";
-// Stores number of times update link has been sent
-const counterFile = "counter.txt";
+
+// Stores the date and other contents all in one json file
+const botInfoFile = 'bot-info.json';
 
 // For Testing Purposes
 // ------------------------------------------------------------------------------------------
 client.on("ready", () => {
     console.log("Bot is now connected");
 });
-
-// client.on('message', msg => {
-//     if (msg.content.substring(0, 1) == '!') {
-//         var args = msg.content.substring(1).split(' ');
-//         var cmd = args[0];
-
-//         args = args.splice(1);
-//         switch (cmd) {
-//             // !ping
-//             case 'ping':
-//                 msg.reply('Pong!');
-//             case 'news':
-//                 getCodUpdate();
-//         }
-//     }
-// });
 // ------------------------------------------------------------------------------------------
 
 function getTodaysDate() {
@@ -40,13 +23,10 @@ function getTodaysDate() {
 }
 
 function getDateFromWebsite() {
-    let date = new Date(fs.readFileSync(botDateFile).toString());
+    let file = fs.readFileSync(botInfoFile);
+    let parsedfile = JSON.parse(file);
+    let date = new Date(parsedfile.date).toDateString();
     return date;
-}
-
-function getCounter() {
-    let counter = parseInt(fs.readFileSync(counterFile));
-    return counter;
 }
 
 // Writes the Date of the Latest Update to the "latest-date.txt" File
@@ -54,13 +34,19 @@ function setDateInFile() {
     axios.get(codURL)
         .then(res => {
             const $ = cheerio.load(res.data);
-            datePath = "div.news-item.news-headline.news-tout0 > a > h3 > span.date";
-            yearPath = "div.news-item.news-headline.news-tout0 > a > h3 > span.year";
-            date = $(datePath).contents().text();
-            year = $(yearPath).contents().text();
+            let datePath = "div.news-item.news-headline.news-tout0 > a > h3 > span.date";
+            let yearPath = "div.news-item.news-headline.news-tout0 > a > h3 > span.year";
+            let date = $(datePath).contents().text();
+            let year = $(yearPath).contents().text();
             // WEBSITE DATE FORMAT: MONTH DAY YEAR => E.G JUN 29 2020
-            fullDate = date + ' ' + year;
-            fs.writeFileSync(botDateFile, fullDate);
+            let fullDate = date + ' ' + year;
+            // Write to file
+            let file = fs.readFileSync(botInfoFile);
+            let parsedfile = JSON.parse(file);
+            // Assign fullDate to date variable in json file
+            parsedfile.date = fullDate;
+            let data = JSON.stringify(parsedfile);
+            fs.writeFileSync(botInfoFile, data);
         })
 }
 
@@ -71,16 +57,13 @@ function sendUpdateToChannel() {
             const url_path = "div.news-item.news-headline.news-tout0 > a";
             const link = $(url_path).attr('href');
             client.channels.get('727922007412572220').send(link);
-            // Changes 0 -> 1, to show link has been sent
-            let counter = parseInt(fs.readFileSync(counterFile));
-            fs.writeFileSync(counterFile, counter + 1)
         })
 }
 
 function getCodUpdate() {
     // Link is only sent if it is dates are equal AND update has not been sent
     // If counter > 0, then update will not be sent
-    if ( (getDateFromWebsite() == getTodaysDate()) && (getCounter() == 0) ) {
+    if (getDateFromWebsite() == getTodaysDate()) {
         sendUpdateToChannel();
     }
 }
