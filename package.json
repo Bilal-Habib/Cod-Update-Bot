@@ -2,14 +2,15 @@
     "name": "codbot",
     "description": "Test",
     "version": "1.0.0",
-    "main": "codbot.js",
+    "main": "patchbot.js",
     "scripts": {
-        "start": "node codbot.js"
+        "start": "node patchbot.js"
     },
     "dependencies": {
         "cheerio": "^1.0.0-rc.3",
         "discord.js": "^11.1.0",
-        "request": "^2.81.0"
+        "request": "^2.81.0",
+        "twit": "^2.2.11"
     },
     "license": "ISC"
 }

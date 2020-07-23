@@ -1,2 +1,12 @@
 # Ignore node modules
 node_modules/
+
+# Ignore twitter config file
+config.js
+
+# Ignore discord token file
+token.js
+
+# Ignore files used for testing purposes
+Retweet.json
+Tweet.json

@@ -4,7 +4,8 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
 
-const token = 'Njg2ODk2MDYwNTI2MTAwNDkw.XweRcg.c3gn58t-RXKubMqGobSTrFQZjos';
+// File containing token
+const auth = require('./token.json');
 const codURL = "https://www.infinityward.com/news";
 
 // Stores the date and other contents all in one json file
@@ -72,4 +73,4 @@ function getCodUpdate() {
 setDateInFile();
 getCodUpdate();
 
-client.login(token);
+client.login(auth.token);
