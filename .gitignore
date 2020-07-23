@@ -5,7 +5,7 @@ node_modules/
 config.js
 
 # Ignore discord token file
-token.js
+token.json
 
 # Ignore files used for testing purposes
 Retweet.json
