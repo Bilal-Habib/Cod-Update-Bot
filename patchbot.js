@@ -7,34 +7,37 @@ const T = new twit(config)
 // File containing token
 const auth = require('./token.json');
 
+// testing purposes
 client.on("ready", () => {
     console.log("Bot is now connected");
 });
 
+// specifies twitter account
 var params = {
     screen_name: 'Activision',
 }
 
+// 
 function gotData(err, data) {
-    let tweets = data.status.entities.urls[0].url;
-    let tweet_link = JSON.stringify(tweets);
-    tweet_link = tweet_link.slice(1, -1);
-    client.channels.get('735878413880918026').send(tweet_link);
-    console.log(tweet_link);
-
-    if (err) throw err;
+    // variable to check if the tweet is a retweet or original tweet
+    let retweet_status = data.status.retweeted_status;
+    
+    // if is an original tweet 
+    if (retweet_status == null) {
+        link = data.status.entities.urls[0].url;
+        client.channels.get('735878413880918026').send(link);
+    // else if it is a retweet
+    } else {
+        link = data.status.retweeted_status.entities.urls[0].url;
+        client.channels.get('735878413880918026').send(link);
+    }
 }
 
+// To test if the bot sends the link
 client.on("message", msg => {
     if (msg.content.includes('patch')) {
         T.get('users/show', params, gotData);
     }
 });
-
-// fs.writeFile('Output2.json', data, (err) => {
-
-    // In case of a error throw err. 
-//         if (err) throw err;
-//     })
 
 client.login(auth.token);
