@@ -73,4 +73,4 @@ function getCodUpdate() {
 setDateInFile();
 getCodUpdate();
 
-client.login(auth.token);
+client.login(process.env.TOKEN);
