@@ -2,9 +2,9 @@
     "name": "codbot",
     "description": "Test",
     "version": "1.0.0",
-    "main": "patchbot.js",
+    "main": "updatebot.js",
     "scripts": {
-        "start": "node patchbot.js"
+        "start": "node updatebot.js"
     },
     "dependencies": {
         "cheerio": "^1.0.0-rc.3",
