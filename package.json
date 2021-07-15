@@ -1,16 +1,16 @@
 {
-    "name": "codbot",
+    "name": "bot",
     "description": "Test",
     "version": "1.0.0",
-    "main": "updatebot.js",
+    "main": "bot.js",
     "scripts": {
-        "start": "node updatebot.js"
+        "start": "node bot.js"
     },
     "dependencies": {
-        "cheerio": "^1.0.0-rc.3",
-        "discord.js": "^11.1.0",
-        "request": "^2.81.0",
+        "axios": "^0.21.1",
+        "cheerio": "^1.0.0-rc.10",
+        "discord.js": "^11.6.4",
+        "request": "^2.88.2",
         "twit": "^2.2.11"
-    },
-    "license": "ISC"
+    }
 }
