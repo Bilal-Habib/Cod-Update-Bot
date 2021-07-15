@@ -4,11 +4,10 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const fs = require('fs');
 
-const codURL = "https://www.infinityward.com/news";
-const token = "Njg2ODk2MDYwNTI2MTAwNDkw.Xmd3zg.Q6-ujBhonc4pnBUC0eAjimYuAi4"
+const websiteUrl = "https://www.infinityward.com/news";
 const textChannel = "864587986195447812"
 // Stores the date and other contents all in one json file
-const botInfoFile = 'bot-info.json';
+const dateFile = 'date.json';
 
 // For Testing Purposes
 // ------------------------------------------------------------------------------------------
@@ -29,7 +28,7 @@ client.on('message', msg => {
                 msg.reply('Pong!');
                 break
             case 'news':
-                sendUpdateToChannel();
+                getCodUpdate()
                 break
             case 'patch':
                 T.get('users/show', params, gotData);
@@ -37,16 +36,17 @@ client.on('message', msg => {
     }
 });
 
-function getDateFromWebsite() {
-    let file = fs.readFileSync(botInfoFile);
+// Gets the date of the update that was last sent from the json file
+function getLastSentUpdate() {
+    let file = fs.readFileSync(dateFile);
     let parsedfile = JSON.parse(file);
     let date = new Date(parsedfile.date);
     return date;
 }
 
-// Writes the Date of the Latest Update to the "latest-date.txt" File
+// Writes the Date of the Latest Update to the json File (do this after you send the update) (last step)
 function setDateInFile() {
-    axios.get(codURL)
+    axios.get(websiteUrl)
         .then(res => {
             const $ = cheerio.load(res.data);
             let datePath = "div.news-item.news-headline.news-tout0 > a > h3 > span.date";
@@ -56,17 +56,17 @@ function setDateInFile() {
             // WEBSITE DATE FORMAT: MONTH DAY YEAR => E.G JUN 29 2020
             let fullDate = date + ' ' + year;
             // Write to file
-            let file = fs.readFileSync(botInfoFile);
+            let file = fs.readFileSync(dateFile);
             let parsedfile = JSON.parse(file);
             // Assign fullDate to date variable in json file
             parsedfile.date = fullDate;
             let data = JSON.stringify(parsedfile);
-            fs.writeFileSync(botInfoFile, data);
+            fs.writeFileSync(dateFile, data);
         })
 }
 
 function sendUpdateToChannel() {
-    axios.get(codURL)
+    axios.get(websiteUrl)
         .then(res => {
             const $ = cheerio.load(res.data);
             const url_path = "div.news-item.news-headline.news-tout0 > a";
@@ -76,10 +76,22 @@ function sendUpdateToChannel() {
 }
 
 function getCodUpdate() {
-    // Link is only sent if it is dates are equal AND update has not been sent
-    if (getDateFromWebsite()) {
-        sendUpdateToChannel();
-    }
+    axios.get(websiteUrl)
+        .then(res => {
+            const $ = cheerio.load(res.data);
+            let datePath = "div.news-item.news-headline.news-tout0 > a > h3 > span.date";
+            let yearPath = "div.news-item.news-headline.news-tout0 > a > h3 > span.year";
+            let date = $(datePath).contents().text();
+            let year = $(yearPath).contents().text();
+            // WEBSITE DATE FORMAT: MONTH DAY YEAR => E.G JUN 29 2020
+            let fullDate = new Date(date + ' ' + year);
+            // Link is only sent if it is dates are equal AND update has not been sent
+            if (fullDate.toDateString() != getLastSentUpdate().toDateString()) {
+                sendUpdateToChannel();
+            }
+            // Updates the date inside the json file
+            setDateInFile()
+        })
 }
 
 // --------------------------------------------------------------------------------------
@@ -124,4 +136,4 @@ function gotData(err, data) {
     }
 }
 
-client.login(token);
+client.login(auth.TOKEN);
