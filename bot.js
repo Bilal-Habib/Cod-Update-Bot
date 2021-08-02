@@ -155,4 +155,4 @@ function gotData(err, data) {
   }
 }
 
-client.login(auth.TOKEN);
+client.login(process.env.TOKEN);
