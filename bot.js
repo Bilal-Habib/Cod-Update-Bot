@@ -23,17 +23,17 @@ client.on("message", (msg) => {
     var cmd = args[0];
 
     args = args.splice(1);
-    switch (cmd) {
-      // !ping
-      case "ping":
-        msg.reply("Pong!");
-        break;
-      case "news":
-        getCodUpdate();
-        break;
-      case "patch":
-        T.get("users/show", params, gotData);
-    }
+    // switch (cmd) {
+    //   // !ping
+    //   case "ping":
+    //     msg.reply("Pong!");
+    //     break;
+    //   case "news":
+    //     getCodUpdate();
+    //     break;
+    //   case "patch":
+    //     T.get("users/show", params, gotData);
+    // }
   }
 });
 
@@ -154,5 +154,9 @@ function gotData(err, data) {
     client.channels.get(textChannel).send(link);
   }
 }
+
+// Run website and twitter scripts
+getCodUpdate();
+// T.get("users/show", params, gotData);
 
 client.login(process.env.TOKEN);
